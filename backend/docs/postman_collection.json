@@ -1,0 +1,595 @@
+{
+	"info": {
+		"_postman_id": "a9b8c7d6-e5f4-4a3b-8c2d-1e0f9a8b7c6d",
+		"name": "Football Team Management Backend API",
+		"description": "Postman Collection for PT Ayo Indonesia Utama Technical Test 2026. Covers all 19 endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teamId",
+			"value": "00000000-0000-0000-0000-000000000000",
+			"type": "string"
+		},
+		{
+			"key": "playerId",
+			"value": "00000000-0000-0000-0000-000000000000",
+			"type": "string"
+		},
+		{
+			"key": "matchId",
+			"value": "00000000-0000-0000-0000-000000000000",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.token) {",
+									"    pm.collectionVariables.set('token', jsonData.data.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@football.local\",\n  \"password\": \"AdminSecret123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "logout"]
+						}
+					}
+				},
+				{
+					"name": "Get Profile (Me)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Teams",
+			"item": [
+				{
+					"name": "Create Team",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('teamId', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Garuda FC\",\n  \"logo_url\": \"https://res.cloudinary.com/demo/image/upload/v1/sample.jpg\",\n  \"founded_year\": 2010,\n  \"address\": \"Jl. Senayan No. 1\",\n  \"city\": \"Jakarta\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teams",
+							"host": ["{{baseUrl}}"],
+							"path": ["teams"]
+						}
+					}
+				},
+				{
+					"name": "List Teams",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/teams?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["teams"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Team Detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/teams/{{teamId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["teams", "{{teamId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Team",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Garuda FC Updated\",\n  \"city\": \"Jakarta Selatan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/teams/{{teamId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["teams", "{{teamId}}"]
+						}
+					}
+				},
+				{
+					"name": "Soft Delete Team",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/teams/{{teamId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["teams", "{{teamId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Players",
+			"item": [
+				{
+					"name": "Create Player",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('playerId', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"team_id\": \"{{teamId}}\",\n  \"name\": \"Bambang Pamungkas\",\n  \"height\": 178.0,\n  \"weight\": 72.0,\n  \"position\": \"striker\",\n  \"jersey_number\": 20\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/players",
+							"host": ["{{baseUrl}}"],
+							"path": ["players"]
+						}
+					}
+				},
+				{
+					"name": "List Players",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/players?team_id={{teamId}}&page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["players"],
+							"query": [
+								{ "key": "team_id", "value": "{{teamId}}" },
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Player Detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/players/{{playerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["players", "{{playerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Update Player",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"weight\": 73.5,\n  \"jersey_number\": 20\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/players/{{playerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["players", "{{playerId}}"]
+						}
+					}
+				},
+				{
+					"name": "Soft Delete Player",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"url": {
+							"raw": "{{baseUrl}}/players/{{playerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["players", "{{playerId}}"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Matches",
+			"item": [
+				{
+					"name": "Schedule Match",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.data && jsonData.data.id) {",
+									"    pm.collectionVariables.set('matchId', jsonData.data.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"home_team_id\": \"{{teamId}}\",\n  \"away_team_id\": \"00000000-0000-0000-0000-000000000001\",\n  \"match_date\": \"2026-10-15\",\n  \"match_time\": \"15:30:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/matches",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches"]
+						}
+					}
+				},
+				{
+					"name": "List Matches",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/matches?page=1&limit=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches"],
+							"query": [
+								{ "key": "page", "value": "1" },
+								{ "key": "limit", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Match Detail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/matches/{{matchId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches", "{{matchId}}"]
+						}
+					}
+				},
+				{
+					"name": "Report Match Result",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"home_score\": 2,\n  \"away_score\": 1,\n  \"goals\": [\n    {\n      \"player_id\": \"{{playerId}}\",\n      \"team_id\": \"{{teamId}}\",\n      \"minute\": 25\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/matches/{{matchId}}/result",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches", "{{matchId}}", "result"]
+						}
+					}
+				},
+				{
+					"name": "Update Match Result",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"home_score\": 1,\n  \"away_score\": 1,\n  \"goals\": [\n    {\n      \"player_id\": \"{{playerId}}\",\n      \"team_id\": \"{{teamId}}\",\n      \"minute\": 25\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/matches/{{matchId}}/result",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches", "{{matchId}}", "result"]
+						}
+					}
+				},
+				{
+					"name": "Get Match Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"url": {
+							"raw": "{{baseUrl}}/matches/{{matchId}}/report",
+							"host": ["{{baseUrl}}"],
+							"path": ["matches", "{{matchId}}", "report"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
