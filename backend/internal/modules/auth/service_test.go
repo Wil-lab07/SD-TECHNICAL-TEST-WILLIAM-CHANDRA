@@ -6,11 +6,27 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
+	"golang.org/x/crypto/bcrypt"
+
 	"football-api/internal/modules/admin"
 	"football-api/internal/modules/auth"
-
-	"golang.org/x/crypto/bcrypt"
 )
+
+func mustParseClaims(t *testing.T, tokenStr, secret string) *auth.Claims {
+	t.Helper()
+	token, err := jwt.ParseWithClaims(tokenStr, &auth.Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+	if err != nil {
+		t.Fatalf("mustParseClaims error: %v", err)
+	}
+	claims, ok := token.Claims.(*auth.Claims)
+	if !ok {
+		t.Fatal("token claims is not *auth.Claims")
+	}
+	return claims
+}
 
 type fakeAdminRepo struct {
 	admins  map[string]*admin.Admin
@@ -165,7 +181,7 @@ func TestLogout(t *testing.T) {
 			t.Fatalf("Login() error: %v", err)
 		}
 
-		claims := auth.MustParseClaims(t, loginResp.Token, testSecret)
+		claims := mustParseClaims(t, loginResp.Token, testSecret)
 
 		if err := svc.Logout(context.Background(), claims); err != nil {
 			t.Fatalf("Logout() error: %v", err)
@@ -191,7 +207,7 @@ func TestLogout(t *testing.T) {
 		svc := auth.NewService(newFakeAdminRepo(validAdmin), authRepo, testSecret)
 
 		loginResp, _ := svc.Login(context.Background(), "admin@test.com", "password")
-		claims := auth.MustParseClaims(t, loginResp.Token, testSecret)
+		claims := mustParseClaims(t, loginResp.Token, testSecret)
 
 		if err := svc.Logout(context.Background(), claims); err == nil {
 			t.Error("expected error from Logout when repo fails")
